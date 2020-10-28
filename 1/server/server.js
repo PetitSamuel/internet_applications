@@ -5,8 +5,7 @@ const port = 3000
 const axios = require('axios').default;
 
 app.use(cors())
-const APP_ID = "190a2ef716e0d6ae3f5ab5d747ece459";
-const daysCount = "5";
+const APP_ID = "3e2d927d4f28b456c6bc662f34350957";
 
 app.get('/api/:city', async(req, res, next) => {
     const city = req.param('city')
