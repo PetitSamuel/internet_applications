@@ -11,14 +11,13 @@ app.get('/api/:city', async(req, res, next) => {
     const city = req.param('city')
     try {
         resp = await axios.get(`http://api.openweathermap.org/data/2.5/forecast?q=${city}&APPID=${APP_ID}`)
+        res.json(resp.data)
     } catch (e) {
         console.log(e);
         next(e)
-        return;
     }
-    res.json(resp.data)
 })
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`App listening at http://localhost:${port}`)
 })
