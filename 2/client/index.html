@@ -1,0 +1,95 @@
+<html>
+  <body>
+    <div id="app">
+      <div v-if="isLoading">Loading...</div>
+      <button v-on:click="createDBHanlder">Create Database</button>
+      <br /><br /><br />
+      <textarea v-model="movieNameInput" placeholder="Movie name"></textarea>
+      <textarea v-model="yearInput" placeholder="Year"></textarea>
+      <button v-on:click="queryDBHandler">Query DB</button>
+      <br /><br /><br />
+      <button v-on:click="destroyDBHandler">Destroy DB</button>
+      <br /><br /><br />
+      <div v-if="movieData && movieData.Count">
+        <span>{{movieData.Count}}</span>
+        <table>
+          <tr v-for="x of movieData.Items">
+            <td>{{ x.title }}</td>
+            <td>{{ x.year }}</td>
+            <td>Actors: {{ x.info.actors.join(",") }}</td>
+            <td>Genres: {{ x.info.genres.join(",") }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script>
+      new Vue({
+        el: "#app",
+        data: function () {
+          return {
+            yearInput: 2012,
+            movieNameInput: "A", // Sample query by default
+            isLoading: false,
+            movieData: undefined,
+          };
+        },
+        methods: {
+          sendFetchRequest: async function (url) {
+            this.isLoading = true;
+            const response = await fetch(url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            });
+            this.isLoading = false;
+            return response;
+          },
+          createDBHanlder: async function () {
+            const CREATE_DB_ENDPOINT = "http://localhost:3000/api/createTable";
+            const response = await this.sendFetchRequest(CREATE_DB_ENDPOINT);
+            if (response.status !== 200) {
+              alert(
+                "Error creating database. The database likely already exists!"
+              );
+            }
+            alert("Database created and populated!");
+          },
+          queryDBHandler: async function () {
+            const QUERY_DB_ENDPOINT = "http://localhost:3000/api/movies";
+            let data;
+            this.isLoading = true;
+            try {
+              data = await fetch(QUERY_DB_ENDPOINT, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  title: this.movieNameInput,
+                  year: parseInt(this.yearInput),
+                }),
+              }).then((res) => res.json());
+            } catch (err) {
+              this.isLoading = false;
+              this.movieData = undefined;
+              alert(
+                "Error with query: both parameters are needed. The year must be an integer."
+              );
+              return;
+            }
+            this.isLoading = false;
+            this.movieData = data;
+          },
+          destroyDBHandler: async function () {
+            const DELETE_DB_ENDPOINT = "http://localhost:3000/api/deleteTable";
+            const response = await this.sendFetchRequest(DELETE_DB_ENDPOINT);
+            if (response.status !== 200) {
+              alert(
+                "Error deleting database. The database likely does not exist!"
+              );
+            }
+            alert("DB Successfully deleted!");
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
