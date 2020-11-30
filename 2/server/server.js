@@ -2,7 +2,6 @@ const express = require("express");
 var cors = require("cors");
 const app = express();
 const port = 3000;
-const axios = require("axios").default;
 var AWS = require("aws-sdk");
 const bodyParser = require("body-parser");
 
@@ -18,6 +17,7 @@ AWS_CONFIG = {
     accessKeyId: "AKIAJIYGZJZPXHVKY6DA",
     secretAccessKey: "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",
     region: "eu-west-1",
+    correctClockSkew: true,
   },
 };
 
@@ -154,24 +154,28 @@ app.post("/api/movies", jsonParser, async (req, res, next) => {
 let moviedata = [];
 
 const getDataFromS3Bucket = async () => {
-  console.log("Loading movies before starting server...");
-  const resp = await axios.get(
-    "https://s3.eu-west-1.amazonaws.com/csu44000assignment220/moviedata.json"
+  console.log(
+    "Loading movies before starting server, this may take a while..."
   );
-  if (resp.status !== 200) {
-    console.log(
-      "Error: could not get movie data from s3 bucket. Stopping server."
-    );
-    console.log("Status code:", resp.status);
-    console / log("err:", resp);
-    process.exit(-1);
-  }
+  const s3 = new AWS.S3();
+  const getParams = {
+    Bucket: "csu44000assignment220",
+    Key: "moviedata.json",
+  };
 
-  moviedata = resp.data;
-  console.log("Movies successfully loaded, starting server...");
-  // Launch server - enables API endpoints.
-  app.listen(port, () => {
-    console.log(`App listening at http://localhost:${port}`);
+  s3.getObject(getParams, function (err, data) {
+    // Handle any error and exit
+    if (err) {
+      console.log("An error occured fetching movies:", err);
+      process.exit(-1);
+    }
+
+    moviedata = JSON.parse(data.Body.toString("utf-8"));
+    console.log(`${moviedata.length} Movies successfully loaded, starting server...`);
+    // Launch server - enables API endpoints.
+    app.listen(port, () => {
+      console.log(`App listening at http://localhost:${port}`);
+    });
   });
 };
 
