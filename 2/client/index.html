@@ -45,7 +45,7 @@
             return response;
           },
           createDBHanlder: async function () {
-            const CREATE_DB_ENDPOINT = "http://localhost:3000/api/createTable";
+            const CREATE_DB_ENDPOINT = "http://ec2-3-250-12-203.eu-west-1.compute.amazonaws.com:3000/api/createTable";
             const response = await this.sendFetchRequest(CREATE_DB_ENDPOINT);
             if (response.status !== 200) {
               alert(
@@ -55,7 +55,7 @@
             alert("Database created and populated!");
           },
           queryDBHandler: async function () {
-            const QUERY_DB_ENDPOINT = "http://localhost:3000/api/movies";
+            const QUERY_DB_ENDPOINT = "http://ec2-3-250-12-203.eu-west-1.compute.amazonaws.com:3000/api/movies";
             let data;
             this.isLoading = true;
             try {
@@ -79,7 +79,7 @@
             this.movieData = data;
           },
           destroyDBHandler: async function () {
-            const DELETE_DB_ENDPOINT = "http://localhost:3000/api/deleteTable";
+            const DELETE_DB_ENDPOINT = "http://ec2-3-250-12-203.eu-west-1.compute.amazonaws.com:3000/api/deleteTable";
             const response = await this.sendFetchRequest(DELETE_DB_ENDPOINT);
             if (response.status !== 200) {
               alert(

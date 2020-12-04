@@ -1,11 +1,10 @@
 const express = require("express");
-var cors = require("cors");
 const app = express();
 const port = 3000;
 var AWS = require("aws-sdk");
 const bodyParser = require("body-parser");
+const path = require("path");
 
-app.use(cors());
 const jsonParser = bodyParser.json();
 
 AWS_CONFIG = {
@@ -41,6 +40,11 @@ AWS.config.update(AWS_CONFIG.aws_remote_config);
 
 const dynamodb = new AWS.DynamoDB();
 const docClient = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true });
+
+
+app.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname + "/../client/index.html"));
+});
 
 app.post("/api/createTable", async (req, res, next) => {
   dynamodb.createTable(TABLE_SCHEMA, function (err, data) {
