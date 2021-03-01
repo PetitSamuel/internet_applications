@@ -5,7 +5,7 @@ const port = 3000
 const axios = require('axios').default;
 
 app.use(cors())
-const APP_ID = "3e2d927d4f28b456c6bc662f34350957";
+const APP_ID = "<APP_ID_OPEN_WEATHER>";
 
 app.get('/api/:city', async(req, res, next) => {
     const city = req.param('city')

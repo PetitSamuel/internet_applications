@@ -13,8 +13,8 @@ AWS_CONFIG = {
     endpoint: "http://localhost:8000",
   },
   aws_remote_config: {
-    accessKeyId: "AKIAJIYGZJZPXHVKY6DA",
-    secretAccessKey: "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",
+    accessKeyId: "<AWS_ACCESS_KEY>",
+    secretAccessKey: "<AWS_SECRECT>",
     region: "eu-west-1",
     correctClockSkew: true,
   },
